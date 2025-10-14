@@ -10,17 +10,17 @@ import UIKit
 final class RootRouter: Router<RootInteractable>, RootRouting {
     
     private let viewController: RootViewController
-    private let transactionListBuilder: TransactionListBuildable
+    private let homeBuilder: HomeBuildable
     
-    private var transactionListRouter: Routing?
+    private var homeRouter: Routing?
 
     init(
         interactor: RootInteractable,
         viewController: RootViewController,
-        transactionListBuilder: TransactionListBuildable
+        homeBuilder: HomeBuildable
     ) {
         self.viewController = viewController
-        self.transactionListBuilder = transactionListBuilder
+        self.homeBuilder = homeBuilder
         // 부모 클래스의 생성자를 호출합니다.
         super.init(interactor: interactor)
     }
@@ -29,13 +29,13 @@ final class RootRouter: Router<RootInteractable>, RootRouting {
         return viewController
     }
 
-    func routeToTransactionList() {
-        guard transactionListRouter == nil else { return }
+    func routeToHome() {
+        guard homeRouter == nil else { return }
         
-        let router = transactionListBuilder.build(withListener: interactor)
-        self.transactionListRouter = router
+        let router = homeBuilder.build(withListener: interactor)
+        self.homeRouter = router
         attach(child: router)
         
-        viewController.attachChild(viewControllable: router.viewControllable)
+        viewController.setRoot(viewControllable: router.viewControllable)
     }
 }

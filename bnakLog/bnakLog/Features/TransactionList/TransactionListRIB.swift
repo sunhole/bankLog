@@ -23,5 +23,5 @@ protocol TransactionListInteractable: Interactable {
 
 /// 부모 RIB (Root)에게 전달할 이벤트가 있다면 여기에 정의
 protocol TransactionListListener: AnyObject {
- 
+    func transactionListDidFinish()
 }
