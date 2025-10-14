@@ -11,28 +11,30 @@ import UIKit
 // 이 클래스가 TransactionListBuilder를 생성하여 공급합니다.
 final class AppComponent: RootDependency {
     lazy var transactionListBuilder: TransactionListBuildable = TransactionListBuilder()
+    lazy var homeBuilder: HomeBuildable = HomeBuilder(dependency: self)
 }
+
+extension AppComponent: HomeDependency { }
 
 final class RootBuilder: RootBuildable {
 
     // RootRIB을 구성하는 모든 컴포넌트를 생성하고 조립하여 반환합니다.
     // Root는 최상위 RIB이므로 Listener가 필요 없습니다.
     func build() -> RootRouting {
-        // 1. 의존성 컴포넌트를 생성합니다.
-        let dependency = AppComponent()
+        // 1. 의존성(부품)을 관리하는 AppComponent를 생성합니다.
+        let appComponent = AppComponent()
+        
+        // 2. Interactor, ViewController를 생성합니다.
+        let interactor = RootInteractor()
         let viewController = RootViewController()
         
-        // 2. Interactor를 생성합니다.
-        let interactor = RootInteractor(dependency: dependency)
-        
-        // 3. Router를 생성하고, 필요한 모든 부품을 주입합니다.
+        // 3. Router를 생성할 때, AppComponent로부터 homeBuilder를 가져와 전달합니다.
         let router = RootRouter(
             interactor: interactor,
             viewController: viewController,
-            transactionListBuilder: dependency.transactionListBuilder
+            homeBuilder: appComponent.homeBuilder
         )
         
-        // 4. Interactor와 Router를 연결합니다.
         interactor.router = router
         
         return router

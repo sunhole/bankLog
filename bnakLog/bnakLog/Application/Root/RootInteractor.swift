@@ -10,17 +10,10 @@ import RxSwift
 final class RootInteractor: Interactor, RootInteractable {
     weak var router: RootRouting?
     weak var listener: RootListener?
-    private let dependency: RootDependency
-    
-    // 생성자(initializer)를 통해 의존성을 주입
-    init(dependency: RootDependency) {
-        self.dependency = dependency
-        super.init()
-    }
     
     override func didBecomeActive() {
         super.didBecomeActive()
-        router?.routeToTransactionList()
+        router?.routeToHome()
     }
     
     override func willResignActive() {

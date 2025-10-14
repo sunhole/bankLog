@@ -12,7 +12,7 @@ protocol TransactionListPresentable: AnyObject {
     func update(with transactions: [Transaction])
 }
 
-final class TransactionListInteractor: Interactor, TransactionListInteractable {
+final class TransactionListInteractor: Interactor, TransactionListInteractable, TransactionListPresentableListener {
     weak var router: TransactionListRouting?
     weak var listener: TransactionListListener?
     weak var viewController: TransactionListPresentable?
@@ -30,6 +30,10 @@ final class TransactionListInteractor: Interactor, TransactionListInteractable {
         
         
         viewController?.update(with: sampleTransactions)
+    }
+    
+    func didFinish() {
+        listener?.transactionListDidFinish()
     }
     
 }
