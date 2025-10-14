@@ -8,18 +8,34 @@
 import UIKit
 
 final class RootRouter: Router<RootInteractable>, RootRouting {
-    private let viewController: RootViewController
     
-    init(interactor: RootInteractor, viewController: RootViewController) {
+    private let viewController: RootViewController
+    private let transactionListBuilder: TransactionListBuildable
+    
+    private var transactionListRouter: Routing?
+
+    init(
+        interactor: RootInteractable,
+        viewController: RootViewController,
+        transactionListBuilder: TransactionListBuildable
+    ) {
         self.viewController = viewController
+        self.transactionListBuilder = transactionListBuilder
+        // 부모 클래스의 생성자를 호출합니다.
         super.init(interactor: interactor)
     }
     
-    var viewControllable: UIViewController {
+    var viewControllable: Viewable {
         return viewController
     }
-    
-    override func load() {
-        super.load()
+
+    func routeToTransactionList() {
+        guard transactionListRouter == nil else { return }
+        
+        let router = transactionListBuilder.build(withListener: interactor)
+        self.transactionListRouter = router
+        attach(child: router)
+        
+        viewController.attachChild(viewControllable: router.viewControllable)
     }
 }

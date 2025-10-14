@@ -15,23 +15,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
-        let window = UIWindow(windowScene: windowScene)
-        self.window = window
-        
-        // 1. RootBuilder를 사용해 RootRouter를 생성합니다.
-        let router = RootBuilder().build()
-        self.rootRouter = router
-        
-        // 2. Root Interactor를 활성화(Activate)하고 Router를 로드(Load)합니다.
-        if let interactor = router as? Router<RootInteractable> {
-            interactor.interactor.activate()
-        }
-        router.load()
-        
-        // 3. RootViewController를 window의 첫 화면으로 설정합니다.
-        window.rootViewController = router.viewControllable
-        window.makeKeyAndVisible()
+           
+           // 1. UIWindow를 생성합니다.
+           let window = UIWindow(windowScene: windowScene)
+           self.window = window
+           
+           // 2. RootBuilder를 생성합니다. 이제 어떠한 인자도 필요 없습니다.
+           let rootBuilder = RootBuilder()
+           
+           // 3. build() 메소드를 호출하여 RootRIB을 생성합니다.
+           let router = rootBuilder.build()
+           self.rootRouter = router
+           
+           // 4. RootRIB을 실행(launch)합니다.
+           router.launch(from: window)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

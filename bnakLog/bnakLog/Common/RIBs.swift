@@ -6,101 +6,101 @@
 //
 
 import UIKit
-import RxSwift
 
-// MARK: - Core RIBs Protocols
+// MARK: - Routing
 
-/// 모든 RIB의 ViewController가 채택해야 하는 기본 프로토콜
-protocol Viewable: AnyObject {}
+public protocol Routing: AnyObject {
+    func interact()
+    func stopInteract()
+}
 
-/// 비즈니스 로직을 담당하는 Interactor가 채택하는 프로토콜
-protocol Interactable: AnyObject {
-    /// Interactor의 활성화 상태
+public protocol ViewableRouting: Routing {
+    var viewControllable: Viewable { get }
+}
+
+// MARK: - Viewable
+
+public protocol Viewable: AnyObject {
+    var uiviewController: UIViewController { get }
+}
+
+extension UIViewController: Viewable {
+    public var uiviewController: UIViewController {
+        return self
+    }
+}
+
+// MARK: - Interactable
+
+public protocol Interactable: AnyObject {
     var isActive: Bool { get }
-    /// Interactor의 활성화 상태를 관찰할 수 있는 스트림
-    var isActiveStream: Observable<Bool> { get }
-
-    /// Interactor 활성화
     func activate()
-    /// Interactor 비활성화
     func deactivate()
 }
 
-/// 다른 RIB으로의 라우팅을 담당하는 Router가 채택하는 프로토콜
-protocol Routing: AnyObject {
-    /// Router가 로드될 때 호출
-    func load()
-    
-    /// 자식 RIB을 붙임
-    func attachChild(_ child: Routing)
-    /// 자식 RIB을 뗌
-    func detachChild(_ child: Routing)
-}
+// MARK: - Interactor
 
-/// RIB의 구성요소(Interactor, Router, View)를 생성하는 Builder가 채택하는 프로토콜
-protocol Buildable: AnyObject {}
-
-
-// MARK: - Base Classes
-
-/// Interactable 프로토콜의 기본 구현체
-class Interactor: Interactable {
-    private let isActiveSubject = BehaviorSubject<Bool>(value: false)
+open class Interactor: Interactable {
+    public var isActive: Bool = false
     
-    var isActive: Bool {
-        (try? isActiveSubject.value()) ?? false
-    }
+    public init() {}
     
-    var isActiveStream: Observable<Bool> {
-        isActiveSubject.asObservable()
-    }
-    
-    func activate() {
-        guard isActive else { return }
-        isActiveSubject.onNext(true)
+    public func activate() {
+        guard !isActive else { return }
+        isActive = true
         didBecomeActive()
     }
     
-    func deactivate() {
+    public func deactivate() {
         guard isActive else { return }
+        isActive = false
         willResignActive()
-        isActiveSubject.onNext(false)
     }
     
-    func didBecomeActive() {
-        //
-    }
-         
-    func willResignActive() {
-        //
-    }
+    open func didBecomeActive() {}
+    
+    open func willResignActive() {}
 }
 
-/// Routing 프로토콜의 기본 구현체
-class Router<InteractorType>: Routing {
-    let interactor: InteractorType
+// MARK: - Router
+
+open class Router<InteractorType>: NSObject, Routing {
+    public let interactor: InteractorType
     private(set) var children: [Routing] = []
     
-    init(interactor: InteractorType) {
+    public init(interactor: InteractorType) {
         self.interactor = interactor
     }
     
-    func load() {
-        // 하위 클래스에서 구현
+    public func interact() {
+        (interactor as? Interactable)?.activate()
     }
     
-    func attachChild(_ child: Routing) {
+    public func stopInteract() {
+        (interactor as? Interactable)?.deactivate()
+    }
+    
+    public func attach(child: Routing) {
+        guard !children.contains(where: { $0 === child }) else { return }
         children.append(child)
-        child.load()
+        child.interact()
     }
     
-    func detachChild(_ child: Routing) {
-        children.removeAll { $0 === child }
+    public func detach(child: Routing) {
+        guard let index = children.firstIndex(where: { $0 === child }) else { return }
+        children.remove(at: index)
+        child.stopInteract()
     }
 }
 
-/// View를 가지는 Router를 위한 프로토콜
-protocol ViewableRouting: Routing {
-    var viewControllable: UIViewController { get }
-}
+// MARK: - ViewableRouting Launch Extension
 
+public extension ViewableRouting {
+    /// RIB을 window에 연결하고 앱을 시작합니다.
+    func launch(from window: UIWindow) {
+        window.rootViewController = viewControllable.uiviewController
+        window.makeKeyAndVisible()
+        
+        interact()
+    }
+}
