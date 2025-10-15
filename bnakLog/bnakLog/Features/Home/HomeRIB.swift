@@ -14,6 +14,7 @@ import RIBs
 // 지금은 비어있지만, 나중에 자식 RIB(TransactionList, Transfer)을 만들 때 필요한 Builder들을 여기에 추가하게 됩니다.
 protocol HomeDependency: AnyObject {
     var transactionListBuilder: TransactionListBuildable { get }
+    var accountTransperBuilder: AccountTransperBuildable { get }
 }
 
 // HomeDependency를 실제로 구현할 Component 클래스입니다.
@@ -33,11 +34,15 @@ protocol HomeBuildable: Buildable {
 }
 
 // MARK: - Router
+enum HomeChildRouterType {
+    case transactionList
+    case accountTransfer
+}
 
 protocol HomeRouting: ViewableRouting {
     func routeToTransactionHistory()
-    func detachTransactionHistory()
     func routeToTransectionTransfer()
+    func detachAllChildren(type: HomeChildRouterType)
 }
 
 protocol HomeViewControllable: Viewable {
@@ -52,7 +57,7 @@ protocol HomeListener: AnyObject {
 
 // MARK: - Interactor
 
-protocol HomeInteractable: Interactable, HomePresentableListener, TransactionListListener {
+protocol HomeInteractable: Interactable, HomePresentableListener, TransactionListListener, AccountTransperListener {
     var router: HomeRouting? { get set }
     var listener: HomeListener? { get set }
 }

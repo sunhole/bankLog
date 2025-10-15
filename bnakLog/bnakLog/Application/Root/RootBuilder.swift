@@ -11,10 +11,11 @@ import UIKit
 // 이 클래스가 TransactionListBuilder를 생성하여 공급합니다.
 final class AppComponent: RootDependency {
     lazy var transactionListBuilder: TransactionListBuildable = TransactionListBuilder()
+    lazy var accountTransperBuilder: AccountTransperBuildable = AccountTransperBuilder()
     lazy var homeBuilder: HomeBuildable = HomeBuilder(dependency: self)
 }
 
-extension AppComponent: HomeDependency { }
+extension AppComponent: HomeDependency {}
 
 final class RootBuilder: RootBuildable {
 

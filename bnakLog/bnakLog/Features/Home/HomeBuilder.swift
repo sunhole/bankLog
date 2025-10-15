@@ -25,7 +25,8 @@ final class HomeBuilder: HomeBuildable {
         let router = HomeRouter(
             interactor: interactor,
             viewController: viewController,
-            transactionListBuilder: dependency.transactionListBuilder
+            transactionListBuilder: dependency.transactionListBuilder,
+            accountTransperBuilder: dependency.accountTransperBuilder
         )
         
         interactor.router = router
