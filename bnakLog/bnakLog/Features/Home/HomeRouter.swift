@@ -32,12 +32,12 @@ final class HomeRouter: Router<HomeInteractable>, HomeRouting {
     }
     
     // HomeRouting 프로토콜의 요구사항을 구현합니다.
-    func routeToTransactionHistory() {
+    func routeToTransactionHistory(transactions: [Transaction]) {
         // 이미 라우터가 있다면 중복 생성을 방지합니다.
         guard transactionListRouter == nil else { return }
         
         // 1. Builder를 사용해 자식 RIB을 만듭니다.
-        let router = transactionListBuilder.build(withListener: interactor)
+        let router = transactionListBuilder.build(withListener: interactor, transactions: transactions)
         self.transactionListRouter = router
         
         // 2. 자식 RIB을 attach 합니다.

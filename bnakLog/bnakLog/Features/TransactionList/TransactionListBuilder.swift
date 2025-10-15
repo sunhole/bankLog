@@ -8,9 +8,9 @@
 import UIKit
 
 final class TransactionListBuilder: TransactionListBuildable {
-    func build(withListener listener: any TransactionListListener) -> any TransactionListRouting {
+    func build(withListener listener: TransactionListListener, transactions: [Transaction]) -> TransactionListRouting {
         let viewController = TransactionListViewController()
-        let interactor = TransactionListInteractor()
+        let interactor = TransactionListInteractor(initialTransactions: transactions)
         
         // Interactor가 부모(HomeRIB)와 통신할 수 있도록 listener를 연결합니다.
         interactor.listener = listener

@@ -9,7 +9,7 @@ import UIKit
 import RIBs
 
 protocol TransactionListBuildable: Buildable {
-    func build(withListener listener: TransactionListListener) -> TransactionListRouting
+    func build(withListener listener: TransactionListListener, transactions: [Transaction]) -> TransactionListRouting
 }
 
 protocol TransactionListRouting: ViewableRouting {

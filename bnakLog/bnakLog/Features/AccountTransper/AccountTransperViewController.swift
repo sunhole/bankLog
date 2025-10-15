@@ -12,6 +12,7 @@ import Combine
 // ViewController -> Interactor
 protocol AccountTransperPresentableListener: AnyObject {
     func didFinish()
+    func send(accountNumber: String, amount: String)
 }
  
 private struct TransperView: View {
@@ -128,7 +129,7 @@ final class AccountTransperViewController: UIViewController {
         
         let transperView = TransperView(
             onSendTapped: { [weak self] accountNumber, amount in
-                self?.listener?.didFinish()
+                self?.listener?.send(accountNumber: accountNumber, amount: amount)
             },
             onCloseTapped: { [weak self] in
                 self?.listener?.didFinish()
