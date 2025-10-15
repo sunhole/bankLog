@@ -7,7 +7,7 @@
 <img src="feature3.png" width="300">
 <img src="feature4.png" width="300">
 
-✨ 주요 기능 (Features)
+## 주요 기능 (Features)
 메인 계좌 조회: 사용자의 현재 계좌 잔액을 확인할 수 있는 홈 화면을 제공합니다.
 
 거래 내역 조회: 전체 입출금 내역을 최신순으로 확인할 수 있습니다.
