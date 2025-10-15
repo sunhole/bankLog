@@ -18,6 +18,7 @@ protocol AccountTransperRouting: ViewableRouting {
 
 protocol AccountTransperListener: AnyObject {
     func accountTransperDidFinish()
+    func transferDidFinish(with newTransaction: Transaction)
 }
 
 protocol AccountTransperInteractable: Interactable {

@@ -40,7 +40,7 @@ enum HomeChildRouterType {
 }
 
 protocol HomeRouting: ViewableRouting {
-    func routeToTransactionHistory()
+    func routeToTransactionHistory(transactions: [Transaction])
     func routeToTransectionTransfer()
     func detachAllChildren(type: HomeChildRouterType)
 }
