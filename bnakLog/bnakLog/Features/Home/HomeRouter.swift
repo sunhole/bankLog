@@ -8,19 +8,22 @@
 import UIKit
 
 final class HomeRouter: Router<HomeInteractable>, HomeRouting {
-    
     private let viewController: HomeViewControllable
     private let transactionListBuilder: TransactionListBuildable
-    
     private var transactionListRouter: Routing?
-
+    
+    private let accountTransperBuilder: AccountTransperBuildable
+    private var accountTransperRouter: Routing?
+    
     init(
         interactor: HomeInteractable,
         viewController: HomeViewControllable,
-        transactionListBuilder: TransactionListBuildable
+        transactionListBuilder: TransactionListBuildable,
+        accountTransperBuilder: AccountTransperBuildable
     ) {
         self.viewController = viewController
         self.transactionListBuilder = transactionListBuilder
+        self.accountTransperBuilder = accountTransperBuilder
         super.init(interactor: interactor)
     }
     
@@ -45,12 +48,27 @@ final class HomeRouter: Router<HomeInteractable>, HomeRouting {
     }
     
     func routeToTransectionTransfer() {
-        //계좌이체 뷰로 이동 필요 
+        //계좌이체 뷰로 이동 필요
+        guard accountTransperRouter == nil else { return }
+        let router = accountTransperBuilder.build(withListener: interactor)
+        self.accountTransperRouter = router
+        
+        attach(child: router)
+        viewController.push(viewControllable: router.viewControllable)
     }
     
-    func detachTransactionHistory() {
-        guard let router = transactionListRouter else { return }
-        detach(child: router)
-        transactionListRouter = nil
+    func detachAllChildren(type: HomeChildRouterType) {
+        switch type {
+        case .transactionList:
+            if let router = transactionListRouter {
+                detach(child: router)
+                transactionListRouter = nil
+            }
+        case .accountTransfer:
+            if let router = accountTransperRouter {
+                detach(child: router)
+                accountTransperRouter = nil
+            }
+        }
     }
 }

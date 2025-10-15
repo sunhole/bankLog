@@ -73,7 +73,7 @@ struct HomeView: View {
                         .foregroundColor(Color.black.opacity(0.5))
 
                     Button(action: {
-                        print("이체 버튼 Tapped")
+                        self.onTransferTapped()
                     }) {
                         Text("이체")
                             .fontWeight(.semibold)

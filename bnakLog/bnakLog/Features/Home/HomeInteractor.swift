@@ -8,7 +8,6 @@
 import Foundation
 
 final class HomeInteractor: Interactor, HomeInteractable, HomePresentableListener {
-    
     weak var router: HomeRouting?
     weak var listener: HomeListener?
 
@@ -33,6 +32,10 @@ final class HomeInteractor: Interactor, HomeInteractable, HomePresentableListene
     }
     
     func transactionListDidFinish() {
-        router?.detachTransactionHistory()
+        router?.detachAllChildren(type: .transactionList)
+    }
+    
+    func accountTransperDidFinish() {
+        router?.detachAllChildren(type: .accountTransfer)
     }
 }
